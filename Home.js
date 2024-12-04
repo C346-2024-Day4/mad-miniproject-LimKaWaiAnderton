@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, FlatList, Alert } from "react-native";
+import { StyleSheet, Text, View, Button, FlatList, Alert, Dimensions } from "react-native";
+import { PieChart } from "react-native-chart-kit";
 import datasource from "./Data";
 
 export default function Home({ navigation }) {
@@ -89,6 +90,24 @@ export default function Home({ navigation }) {
     </View>
   );
 
+  // Data for PieChart
+  const pieData = [
+    {
+      name: "Income",
+      amount: totals.totalIncome,
+      color: "#4CAF50", // Green
+      legendFontColor: "#333",
+      legendFontSize: 14,
+    },
+    {
+      name: "Expenses",
+      amount: totals.totalExpenses,
+      color: "#F44336", // Red
+      legendFontColor: "#333",
+      legendFontSize: 14,
+    },
+  ];
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Expense Tracker</Text>
@@ -108,6 +127,24 @@ export default function Home({ navigation }) {
           Balance: ${totals.balance.toFixed(2)}
         </Text>
       </View>
+
+      <Text style={styles.chartHeader}>Income vs Expenses</Text>
+      <PieChart
+        data={pieData}
+        width={Dimensions.get("window").width - 40} // Width of the screen minus padding
+        height={200}
+        chartConfig={{
+          backgroundColor: "#1cc910",
+          backgroundGradientFrom: "#eff3ff",
+          backgroundGradientTo: "#efefef",
+          color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+        }}
+        accessor={"amount"}
+        backgroundColor={"transparent"}
+        paddingLeft={"15"}
+        center={[10, 0]}
+        absolute
+      />
 
       <Text style={styles.recentHeader}>Recent Transactions</Text>
       <FlatList
@@ -131,7 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f5f5f5",
     padding: 20,
-    marginTop: 50,
+    marginTop: 40,
   },
   header: {
     fontSize: 24,
@@ -153,6 +190,12 @@ const styles = StyleSheet.create({
   summaryText: {
     fontSize: 18,
     marginVertical: 8,
+  },
+  chartHeader: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginVertical: 10,
+    textAlign: "center",
   },
   recentHeader: {
     fontSize: 20,
